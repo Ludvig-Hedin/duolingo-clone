@@ -207,6 +207,22 @@ Once the script completes, check your database to ensure that the challenges dat
 
 **NOTE:** Please make sure to keep your API keys and configuration values secure and do not expose them publicly.
 
+## :iphone: Mobile apps (iOS & Android)
+
+Native iOS and Android apps let you install Lingo on your phone's home screen. They
+are thin [Capacitor](https://capacitorjs.com/) WebView wrappers around the deployed
+site (`com.lingo.app`), so the apps always match production and email/password auth
+works exactly as it does in a mobile browser.
+
+```bash
+nvm use 22       # Capacitor CLI needs Node >= 22
+bun run ios      # open the iOS project in Xcode
+bun run android  # open the Android project in Android Studio
+```
+
+Full build, install, signing, auth and store-submission details are in
+[`docs/mobile-apps.md`](docs/mobile-apps.md).
+
 ## :camera: Screenshots
 
 ![Modern UI/UX](/.github/images/img1.png "Modern UI/UX")

@@ -39,3 +39,6 @@ next-env.d.ts
 # testing tools
 /ngrok
 /stripe
+
+# capacitor: stray PWA icon output from `cap:assets` (unused by the Next.js app)
+/icons

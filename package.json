@@ -12,7 +12,12 @@
     "format:fix": "prettier --write --ignore-path .gitignore .",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push",
-    "db:prod": "tsx ./scripts/prod.ts"
+    "db:prod": "tsx ./scripts/prod.ts",
+    "cap:sync": "cap sync",
+    "cap:assets": "capacitor-assets generate --assetPath mobile/assets --iconBackgroundColor '#22C55E' --iconBackgroundColorDark '#22C55E' --splashBackgroundColor '#FFFFFF' --splashBackgroundColorDark '#0F172A'",
+    "cap:doctor": "cap doctor",
+    "ios": "cap sync ios && cap open ios",
+    "android": "cap sync android && cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.0",
