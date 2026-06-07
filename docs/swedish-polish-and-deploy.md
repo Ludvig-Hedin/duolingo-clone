@@ -91,6 +91,20 @@ shop/premium tier and can start as a placeholder.
 > database must be **Neon** (e.g. via the Vercel Marketplace → Neon, or
 > neon.tech directly). A generic Postgres URL will not work.
 
+### Quick path (one command)
+
+The Vercel project is already created and linked. Once you have the credentials
+above, run the helper script — it sets every env var, deploys, repoints
+`NEXT_PUBLIC_APP_URL` at the real URL, redeploys, and seeds the database:
+
+```bash
+bash scripts/finish-deploy.sh
+```
+
+It prompts for `DATABASE_URL`, the Clerk keys, and (optionally) Stripe; secret
+inputs are read without echoing. Prefer the manual flow below if you'd rather do
+each step yourself.
+
 ### Step-by-step
 
 1. **Neon DB** — create a project at the Vercel Marketplace (Storage → Neon) or
