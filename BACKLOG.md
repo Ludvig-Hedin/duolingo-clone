@@ -21,8 +21,8 @@ left out of a change.
 
 - ~~**Hearts modal links to a dead route.**~~ Fixed — `hearts-modal.tsx` now
   pushes to `/shop` instead of the nonexistent `/store`.
-- **ESLint is broken in this repo.** `npm run lint` throws
-  `Converting circular structure to JSON` because ESLint 10.4.0 +
-  `@eslint/eslintrc` `FlatCompat` can't load `eslint-config-next`'s legacy
-  config. Pin a compatible ESLint, or migrate `eslint.config.mjs` to
-  eslint-config-next's flat config. (Area: `eslint.config.mjs`, `package.json`)
+- ~~**ESLint is broken in this repo.**~~ Fixed — downgraded to ESLint 9,
+  rewrote `eslint.config.mjs` to use `eslint-config-next`'s native flat
+  config export (no `FlatCompat`), disabled the aggressive
+  `react-hooks/set-state-in-effect` rule that incorrectly flags the
+  `useEffect(() => setIsClient(true), [])` SSR hydration guard.
