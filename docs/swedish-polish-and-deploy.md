@@ -20,25 +20,27 @@ The existing `Spanish` course is preserved. The flag shown on each course card
 is the **target** language (what you are learning), matching Duolingo's
 convention; the direction is made explicit in the course title.
 
-### Vocabulary
+### Curriculum
 
-Each course teaches the same six illustrated nouns (images are shared and
-language-neutral): man, woman, boy, girl, zombie, robot.
+Both directional courses are generated from one shared `CURRICULUM` in
+`scripts/prod.ts` — 7 themed units × 2 lessons (84 Swedish/Polish word pairs):
 
-| Image | Swedish (definite) | Polish |
-| --- | --- | --- |
-| man | mannen | mężczyzna |
-| woman | kvinnan | kobieta |
-| boy | pojken | chłopiec |
-| girl | flickan | dziewczynka |
-| zombie | zombien | zombie |
-| robot | roboten | robot |
+1. People & Family · 2. Food & Drink · 3. Animals · 4. Colors & Adjectives ·
+5. Verbs · 6. Greetings & Phrases · 7. Numbers
 
-`Swedish → Polish` prompts read `Vilken av dessa är "<swedish>"?`;
-`Polish → Swedish` prompts read `Który z nich to "<polish>"?`. `ASSIST`
-challenges show the source word in quotes. No audio assets exist for Swedish or
-Polish, so `audioSrc` is omitted for those courses (the player handles a missing
-source silently — see `app/lesson/card.tsx`).
+Each lesson generates a `SELECT` challenge for every word (pick the translation,
+distractors drawn from the same lesson so they stay on-theme) plus `ASSIST`
+text-prompts for every other word — **126 challenges per direction**. The
+`Swedish → Polish` course uses Swedish as the source / Polish as the answer;
+`Polish → Swedish` swaps them. Prompts read `Vilken av dessa är "<sv>"?` and
+`Który z nich to "<pl>"?` respectively. These courses are text-only (no image or
+audio assets); the player handles missing media silently (see
+`app/lesson/card.tsx`).
+
+`Spanish` is kept as a compact image + audio course (1 unit, 2 lessons) using the
+existing `man/woman/boy/girl/zombie/robot` SVGs and `es_*.mp3` clips.
+
+Totals: 3 courses, 270 challenges, 810 options.
 
 ### New files
 
