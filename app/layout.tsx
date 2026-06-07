@@ -7,6 +7,8 @@ import { HeartsModal } from "@/components/modals/hearts-modal";
 import { PracticeModal } from "@/components/modals/practice-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config";
+import { I18nProvider } from "@/lib/i18n/context";
+import { getCurrentLocale } from "@/lib/i18n/server";
 
 import "./globals.css";
 
@@ -18,11 +20,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = siteConfig;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getCurrentLocale();
+
   return (
     <ClerkProvider
       appearance={{
@@ -35,13 +39,15 @@ export default function RootLayout({
       }}
       afterSignOutUrl="/"
     >
-      <html lang="en">
+      <html lang={locale}>
         <body className={font.className}>
-          <Toaster theme="light" richColors closeButton />
-          <ExitModal />
-          <HeartsModal />
-          <PracticeModal />
-          {children}
+          <I18nProvider locale={locale}>
+            <Toaster theme="light" richColors closeButton />
+            <ExitModal />
+            <HeartsModal />
+            <PracticeModal />
+            {children}
+          </I18nProvider>
         </body>
       </html>
     </ClerkProvider>

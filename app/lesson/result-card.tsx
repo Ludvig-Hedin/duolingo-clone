@@ -1,6 +1,9 @@
+"use client";
+
 import { InfinityIcon } from "lucide-react";
 import Image from "next/image";
 
+import { useTranslation } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 type ResultCardProps = {
@@ -9,6 +12,7 @@ type ResultCardProps = {
 };
 
 export const ResultCard = ({ value, variant }: ResultCardProps) => {
+  const { t } = useTranslation();
   const imageSrc = variant === "points" ? "/points.svg" : "/heart.svg";
 
   return (
@@ -26,7 +30,7 @@ export const ResultCard = ({ value, variant }: ResultCardProps) => {
           variant === "hearts" && "bg-rose-500"
         )}
       >
-        {variant === "hearts" ? "Hears Left" : "Total XP"}
+        {variant === "hearts" ? t.lesson.heartsLeft : t.lesson.totalXp}
       </div>
 
       <div

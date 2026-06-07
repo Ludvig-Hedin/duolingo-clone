@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { upsertUserProgress } from "@/actions/user-progress";
 import { courses, userProgress } from "@/db/schema";
+import { useTranslation } from "@/lib/i18n/context";
 
 import { Card } from "./card";
 
@@ -17,6 +18,7 @@ type ListProps = {
 
 export const List = ({ courses, activeCourseId }: ListProps) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
 
   const onClick = (id: number) => {
@@ -27,7 +29,7 @@ export const List = ({ courses, activeCourseId }: ListProps) => {
     startTransition(() => {
       upsertUserProgress(id)
         .then(() => router.push("/learn"))
-        .catch(() => toast.error("Something went wrong."));
+        .catch(() => toast.error(t.common.somethingWrong));
     });
   };
 

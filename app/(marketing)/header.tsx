@@ -14,9 +14,11 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { links } from "@/config";
+import { useTranslation } from "@/lib/i18n/context";
 
 export const Header = () => {
   const { isSignedIn } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <header className="h-20 w-full border-b-2 border-slate-200 px-4">
@@ -41,7 +43,7 @@ export const Header = () => {
             <Show when="signed-out">
               <SignInButton mode="modal">
                 <Button size="lg" variant="ghost">
-                  Login
+                  {t.marketing.login}
                 </Button>
               </SignInButton>
             </Show>

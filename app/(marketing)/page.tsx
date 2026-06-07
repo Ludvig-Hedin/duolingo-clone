@@ -10,8 +10,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { getServerDictionary } from "@/lib/i18n/server";
 
-export default function MarketingPage() {
+export default async function MarketingPage() {
+  const t = await getServerDictionary();
+
   return (
     <div className="mx-auto flex w-full max-w-[988px] flex-1 flex-col items-center justify-center gap-2 p-4 lg:flex-row">
       <div className="relative mb-8 h-[240px] w-[240px] lg:mb-0 lg:h-[424px] lg:w-[424px]">
@@ -20,7 +23,7 @@ export default function MarketingPage() {
 
       <div className="flex flex-col items-center gap-y-8">
         <h1 className="max-w-[480px] text-center text-xl font-bold text-neutral-600 lg:text-3xl">
-          Learn, practice and master new languages with Lingo.
+          {t.marketing.hero}
         </h1>
 
         <div className="flex w-full max-w-[330px] flex-col items-center gap-y-3">
@@ -31,20 +34,20 @@ export default function MarketingPage() {
           <ClerkLoaded>
             <Show when="signed-in">
               <Button size="lg" variant="secondary" className="w-full" asChild>
-                <Link href="/learn">Continue Learning</Link>
+                <Link href="/learn">{t.marketing.continueLearning}</Link>
               </Button>
             </Show>
 
             <Show when="signed-out">
               <SignUpButton mode="modal">
                 <Button size="lg" variant="secondary" className="w-full">
-                  Get Started
+                  {t.marketing.getStarted}
                 </Button>
               </SignUpButton>
 
               <SignInButton mode="modal">
                 <Button size="lg" variant="primaryOutline" className="w-full">
-                  I already have an account
+                  {t.marketing.haveAccount}
                 </Button>
               </SignInButton>
             </Show>

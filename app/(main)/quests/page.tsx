@@ -8,8 +8,10 @@ import { Progress } from "@/components/ui/progress";
 import { UserProgress } from "@/components/user-progress";
 import { QUESTS } from "@/constants";
 import { getUserProgress, getUserSubscription } from "@/db/queries";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 const QuestsPage = async () => {
+  const t = await getServerDictionary();
   const userProgressData = getUserProgress();
   const userSubscriptionData = getUserSubscription();
 
@@ -39,10 +41,10 @@ const QuestsPage = async () => {
           <Image src="/quests.svg" alt="Quests" height={90} width={90} />
 
           <h1 className="my-6 text-center text-2xl font-bold text-neutral-800">
-            Quests
+            {t.quests.title}
           </h1>
           <p className="mb-6 text-center text-lg text-muted-foreground">
-            Complete quests by earning points.
+            {t.quests.subtitle}
           </p>
 
           <ul className="w-full">
