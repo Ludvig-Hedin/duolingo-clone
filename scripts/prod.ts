@@ -25,7 +25,7 @@ type Item = {
   audio?: string;
 };
 
-type SeedLesson = { title: string; items: Item[] };
+type SeedLesson = { title: string; tip?: string; items: Item[] };
 type SeedUnit = { title: string; description: string; lessons: SeedLesson[] };
 type SeedCourse = {
   title: string;
@@ -381,6 +381,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Powitania",
+          tip: `Szwedzki ma trzy dodatkowe samogłoski: "å", "ä", "ö". Akcent zwykle pada na pierwszą sylabę. Powitanie "hej" wymawia się jak angielskie "hey".`,
           items: [
             pair("cześć", "hej"),
             pair("dzień dobry", "god dag"),
@@ -409,6 +410,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Przedstawianie się",
+          tip: `W szwedzkim czasownik stoi na drugim miejscu w zdaniu (szyk V2): "Jag heter Anna", "Jag kommer från Polen".`,
           items: [
             pair("Jak się nazywasz?", "Vad heter du?"),
             pair("Nazywam się Anna", "Jag heter Anna"),
@@ -440,6 +442,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Liczby 0–5",
+          tip: `Liczba "jeden" to po szwedzku "ett". To samo słowo oznacza rodzaj nijaki rzeczownika; większość rzeczowników ma jednak rodzaj "en".`,
           items: [
             pair("zero", "noll"),
             pair("jeden", "ett"),
@@ -468,6 +471,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Ludzie",
+          tip: `Szwedzkie rzeczowniki mają rodzaj "en" albo "ett". Nie ma prostej reguły — ucz się słowa razem z rodzajnikiem: "en man", "en kvinna", "ett barn".`,
           items: [
             pair("mężczyzna", "en man"),
             pair("kobieta", "en kvinna"),
@@ -496,6 +500,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Jedzenie",
+          tip: `Rzeczowniki niepoliczalne zwykle nie mają rodzajnika: "vatten", "kaffe", "bröd". Policzalne mają rodzajnik: "ett äpple", "en fisk".`,
           items: [
             pair("chleb", "bröd"),
             pair("ser", "ost"),
@@ -524,6 +529,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "Podstawowe czasowniki",
+          tip: `Szwedzki czasownik w czasie teraźniejszym ma jedną formę dla wszystkich osób: "jag äter", "du äter", "han äter". Pamiętaj o szyku V2.`,
           items: [
             pair("ja jestem", "jag är"),
             pair("ja mam", "jag har"),
@@ -552,6 +558,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
       lessons: [
         {
           title: "W mieście",
+          tip: `W pytaniach czasownik stoi przed podmiotem: "Talar du engelska?", "Var ligger stationen?".`,
           items: [
             pair("Gdzie jest toaleta?", "Var är toaletten?"),
             pair("Ile to kosztuje?", "Hur mycket kostar det?"),
@@ -609,16 +616,28 @@ type ChallengeSpec = {
 };
 
 /**
- * For a lesson, build a SELECT challenge for every item (pick the translation),
- * plus an ASSIST challenge for every other item. Distractors are the next two
- * items in the same lesson, so they stay on-theme. Lessons need >= 3 items.
+ * For a lesson, optionally lead with a grammar TIP card, then build a SELECT
+ * challenge for every item (pick the translation) plus an ASSIST challenge for
+ * every other item. Distractors are the next two items in the same lesson, so
+ * they stay on-theme. Lessons need >= 3 items.
  */
 const buildLessonChallenges = (
-  items: Item[],
+  lesson: SeedLesson,
   selectPrompt: (source: string) => string
 ): ChallengeSpec[] => {
+  const { items } = lesson;
   const challenges: ChallengeSpec[] = [];
   let order = 1;
+
+  // A grammar tip, when present, is the first thing shown in the lesson.
+  if (lesson.tip) {
+    challenges.push({
+      type: "TIP",
+      order: order++,
+      question: lesson.tip,
+      options: [],
+    });
+  }
 
   const distractorsFor = (index: number) => [
     items[(index + 1) % items.length],
@@ -710,7 +729,7 @@ const main = async () => {
         for (let l = 0; l < lessons.length; l++) {
           const lesson = lessons[l];
           const specs = buildLessonChallenges(
-            unitSeed.lessons[l].items,
+            unitSeed.lessons[l],
             courseSeed.selectPrompt
           );
 
@@ -728,6 +747,9 @@ const main = async () => {
 
           for (const challenge of challenges) {
             const spec = specs[challenge.order - 1];
+
+            // TIP challenges have no options.
+            if (spec.options.length === 0) continue;
 
             await db.insert(schema.challengeOptions).values(
               spec.options.map((option) => ({

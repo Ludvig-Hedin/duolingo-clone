@@ -25,6 +25,9 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
   if (!challenge) throw new Error("Challenge not found.");
 
+  // Grammar tips are not scored, so they never consume a heart.
+  const isTip = challenge.type === "TIP";
+
   const lessonId = challenge.lessonId;
 
   const existingChallengeProgress = await db.query.challengeProgress.findFirst({
@@ -37,6 +40,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   const isPractice = !!existingChallengeProgress;
 
   if (
+    !isTip &&
     currentUserProgress.hearts === 0 &&
     !isPractice &&
     !userSubscription?.isActive

@@ -5,11 +5,12 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
-import { useAudio, useWindowSize, useMount } from "react-use";
+import { useAudio, useWindowSize, useMount, useMedia } from "react-use";
 import { toast } from "sonner";
 
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { reduceHearts } from "@/actions/user-progress";
+import { Button } from "@/components/ui/button";
 import { MAX_HEARTS } from "@/constants";
 import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { useTranslation } from "@/lib/i18n/context";
@@ -21,6 +22,7 @@ import { Footer } from "./footer";
 import { Header } from "./header";
 import { QuestionBubble } from "./question-bubble";
 import { ResultCard } from "./result-card";
+import { TipCard } from "./tip-card";
 
 type QuizProps = {
   initialPercentage: number;
@@ -55,6 +57,7 @@ export const Quiz = ({
     autoPlay: true,
   });
   const { width, height } = useWindowSize();
+  const isMobile = useMedia("(max-width: 1024px)");
 
   const { t } = useTranslation();
   const router = useRouter();
@@ -155,6 +158,17 @@ export const Quiz = ({
     }
   };
 
+  const onContinueTip = () => {
+    startTransition(() => {
+      upsertChallengeProgress(challenge.id)
+        .then(() => {
+          setPercentage((prev) => prev + 100 / challenges.length);
+          onNext();
+        })
+        .catch(() => toast.error(t.lesson.somethingWrongRetry));
+    });
+  };
+
   if (!challenge) {
     return (
       <>
@@ -205,10 +219,41 @@ export const Quiz = ({
     );
   }
 
+  if (challenge.type === "TIP") {
+    return (
+      <>
+        <Header
+          hearts={hearts}
+          percentage={percentage}
+          hasActiveSubscription={!!userSubscription?.isActive}
+        />
+
+        <div className="flex-1">
+          <div className="flex h-full items-center justify-center">
+            <div className="flex w-full flex-col gap-y-8 px-6 lg:w-[600px] lg:px-0">
+              <TipCard text={challenge.question} />
+            </div>
+          </div>
+        </div>
+
+        <footer className="h-[100px] border-t-2 lg:h-[140px]">
+          <div className="mx-auto flex h-full max-w-[1140px] items-center justify-end px-6 lg:px-10">
+            <Button
+              disabled={pending}
+              onClick={onContinueTip}
+              size={isMobile ? "sm" : "lg"}
+              variant="secondary"
+            >
+              {t.lesson.continue}
+            </Button>
+          </div>
+        </footer>
+      </>
+    );
+  }
+
   const title =
-    challenge.type === "ASSIST"
-      ? t.lesson.selectMeaning
-      : challenge.question;
+    challenge.type === "ASSIST" ? t.lesson.selectMeaning : challenge.question;
 
   return (
     <>
