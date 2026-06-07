@@ -19,9 +19,8 @@ left out of a change.
 
 ## Pre-existing bugs spotted (out of scope of the i18n change)
 
-- **Hearts modal links to a dead route.** `components/modals/hearts-modal.tsx`
-  pushes to `/store`, but the route is `/shop`. The "Get unlimited hearts"
-  button currently navigates to a 404. Fix: `router.push("/shop")`.
+- ~~**Hearts modal links to a dead route.**~~ Fixed — `hearts-modal.tsx` now
+  pushes to `/shop` instead of the nonexistent `/store`.
 - **ESLint is broken in this repo.** `npm run lint` throws
   `Converting circular structure to JSON` because ESLint 10.4.0 +
   `@eslint/eslintrc` `FlatCompat` can't load `eslint-config-next`'s legacy
