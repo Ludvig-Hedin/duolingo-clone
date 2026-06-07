@@ -21,8 +21,11 @@ import { Challenge } from "./challenge";
 import { Footer } from "./footer";
 import { Header } from "./header";
 import { QuestionBubble } from "./question-bubble";
+import { BuildChallenge } from "./build-challenge";
+import { MatchChallenge } from "./match-challenge";
 import { ResultCard } from "./result-card";
 import { TipCard } from "./tip-card";
+import { TypeChallenge } from "./type-challenge";
 
 type QuizProps = {
   initialPercentage: number;
@@ -167,6 +170,47 @@ export const Quiz = ({
     });
   };
 
+  // Shared grading for the MATCH/TYPE/BUILD exercise types: a correct answer
+  // scores and advances immediately; a wrong one costs a heart and lets the
+  // learner try again (the child component keeps its own input state).
+  const gradeCorrect = () => {
+    startTransition(() => {
+      upsertChallengeProgress(challenge.id)
+        .then((response) => {
+          if (response?.error === "hearts") {
+            openHeartsModal();
+            return;
+          }
+
+          void correctControls.play();
+          setPercentage((prev) => prev + 100 / challenges.length);
+
+          if (initialPercentage === 100) {
+            setHearts((prev) => Math.min(prev + 1, MAX_HEARTS));
+          }
+
+          onNext();
+        })
+        .catch(() => toast.error(t.lesson.somethingWrongRetry));
+    });
+  };
+
+  const gradeWrong = () => {
+    startTransition(() => {
+      reduceHearts(challenge.id)
+        .then((response) => {
+          if (response?.error === "hearts") {
+            openHeartsModal();
+            return;
+          }
+
+          void incorrectControls.play();
+          if (!response?.error) setHearts((prev) => Math.max(prev - 1, 0));
+        })
+        .catch(() => toast.error(t.lesson.somethingWrongRetry));
+    });
+  };
+
   if (!challenge) {
     return (
       <>
@@ -246,6 +290,60 @@ export const Quiz = ({
             </Button>
           </div>
         </footer>
+      </>
+    );
+  }
+
+  const header = (
+    <Header
+      hearts={hearts}
+      percentage={percentage}
+      hasActiveSubscription={!!userSubscription?.isActive}
+    />
+  );
+
+  if (challenge.type === "MATCH") {
+    return (
+      <>
+        {header}
+        <MatchChallenge
+          key={challenge.id}
+          options={options}
+          onComplete={gradeCorrect}
+          disabled={pending}
+        />
+      </>
+    );
+  }
+
+  if (challenge.type === "TYPE") {
+    return (
+      <>
+        {header}
+        <TypeChallenge
+          key={challenge.id}
+          question={challenge.question}
+          answer={options.find((option) => option.correct)?.text ?? ""}
+          onCorrect={gradeCorrect}
+          onWrong={gradeWrong}
+          disabled={pending}
+        />
+      </>
+    );
+  }
+
+  if (challenge.type === "BUILD") {
+    return (
+      <>
+        {header}
+        <BuildChallenge
+          key={challenge.id}
+          question={challenge.question}
+          options={options}
+          onCorrect={gradeCorrect}
+          onWrong={gradeWrong}
+          disabled={pending}
+        />
       </>
     );
   }

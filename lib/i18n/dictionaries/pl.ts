@@ -76,6 +76,9 @@ export const pl: Dictionary = {
     totalXp: "Łączne XP",
     heartsLeft: "Pozostałe serca",
     grammarTip: "Wskazówka",
+    matchPairs: "Połącz pary",
+    buildSentence: "Ułóż tłumaczenie",
+    typePlaceholder: "Wpisz odpowiedź…",
   },
   modals: {
     exit: {
@@ -100,7 +103,8 @@ export const pl: Dictionary = {
   },
   onboarding: {
     title: "Wybierz swój język",
-    subtitle: "Jakiego języka ma używać Lingo? Możesz to zmienić w dowolnej chwili.",
+    subtitle:
+      "Jakiego języka ma używać Lingo? Możesz to zmienić w dowolnej chwili.",
     continue: "Kontynuuj",
   },
   language: {

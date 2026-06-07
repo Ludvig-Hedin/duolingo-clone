@@ -76,6 +76,9 @@ export const sv: Dictionary = {
     totalXp: "Total XP",
     heartsLeft: "Hjärtan kvar",
     grammarTip: "Grammatiktips",
+    matchPairs: "Para ihop",
+    buildSentence: "Bygg översättningen",
+    typePlaceholder: "Skriv ditt svar…",
   },
   modals: {
     exit: {
@@ -86,7 +89,8 @@ export const sv: Dictionary = {
     },
     hearts: {
       title: "Du har slut på hjärtan!",
-      description: "Skaffa Pro för obegränsade hjärtan, eller köp dem i butiken.",
+      description:
+        "Skaffa Pro för obegränsade hjärtan, eller köp dem i butiken.",
       getUnlimited: "Skaffa obegränsade hjärtan",
       noThanks: "Nej tack",
     },
@@ -99,7 +103,8 @@ export const sv: Dictionary = {
   },
   onboarding: {
     title: "Välj ditt språk",
-    subtitle: "Vilket språk ska Lingo använda? Du kan ändra detta när som helst.",
+    subtitle:
+      "Vilket språk ska Lingo använda? Du kan ändra detta när som helst.",
     continue: "Fortsätt",
   },
   language: {

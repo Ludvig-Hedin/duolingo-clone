@@ -75,6 +75,9 @@ export const en = {
     totalXp: "Total XP",
     heartsLeft: "Hearts left",
     grammarTip: "Grammar Tip",
+    matchPairs: "Match the pairs",
+    buildSentence: "Build the translation",
+    typePlaceholder: "Type your answer…",
   },
   modals: {
     exit: {
@@ -85,7 +88,8 @@ export const en = {
     },
     hearts: {
       title: "You ran out of hearts!",
-      description: "Get Pro for unlimited hearts, or purchase them in the store.",
+      description:
+        "Get Pro for unlimited hearts, or purchase them in the store.",
       getUnlimited: "Get unlimited hearts",
       noThanks: "No thanks",
     },

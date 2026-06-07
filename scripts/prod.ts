@@ -32,6 +32,8 @@ type SeedCourse = {
   imageSrc: string;
   /** Wraps a source word into a "pick the translation" prompt, in the source language. */
   selectPrompt: (source: string) => string;
+  /** Wraps a source word into a "type the translation" prompt, in the source language. */
+  typePrompt: (source: string) => string;
   units: SeedUnit[];
 };
 
@@ -242,12 +244,14 @@ const buildDirectionalCourse = (
   title: string,
   imageSrc: string,
   selectPrompt: (source: string) => string,
+  typePrompt: (source: string) => string,
   source: (word: Vocab) => string,
   target: (word: Vocab) => string
 ): SeedCourse => ({
   title,
   imageSrc,
   selectPrompt,
+  typePrompt,
   units: CURRICULUM.map((unit, unitIndex) => ({
     title: `Unit ${unitIndex + 1}`,
     description: unit.theme,
@@ -269,6 +273,7 @@ const SPANISH: SeedCourse = {
   title: "Spanish",
   imageSrc: "/es.svg",
   selectPrompt: (source) => `Which one of these is "${source}"?`,
+  typePrompt: (source) => `Type in Spanish: "${source}"`,
   units: [
     {
       title: "Unit 1",
@@ -374,6 +379,7 @@ const POLISH_TO_SWEDISH: SeedCourse = {
   title: "Polish → Swedish",
   imageSrc: "/se.svg",
   selectPrompt: (source) => `Jak powiesz "${source}" po szwedzku?`,
+  typePrompt: (source) => `Napisz po szwedzku: "${source}"`,
   units: [
     {
       title: "Unit 1",
@@ -591,6 +597,7 @@ const COURSES: SeedCourse[] = [
     "Swedish → Polish",
     "/pl.svg",
     (source) => `Vilken av dessa är "${source}"?`,
+    (source) => `Skriv på polska: "${source}"`,
     (word) => word.sv,
     (word) => word.pl
   ),
@@ -623,7 +630,8 @@ type ChallengeSpec = {
  */
 const buildLessonChallenges = (
   lesson: SeedLesson,
-  selectPrompt: (source: string) => string
+  selectPrompt: (source: string) => string,
+  typePrompt: (source: string) => string
 ): ChallengeSpec[] => {
   const { items } = lesson;
   const challenges: ChallengeSpec[] = [];
@@ -674,6 +682,66 @@ const buildLessonChallenges = (
         { text: item.target, correct: true, audio: item.audio },
         { text: d1.target, correct: false, audio: d1.audio },
         { text: d2.target, correct: false, audio: d2.audio },
+      ],
+    });
+  });
+
+  const wordCount = (value: string) => value.trim().split(/\s+/).length;
+  const shortItems = items.filter(
+    (it) => wordCount(it.source) <= 2 && wordCount(it.target) <= 2
+  );
+  const sentenceItems = items.filter((it) => wordCount(it.target) >= 3);
+
+  // MATCH: tap-to-pair short vocabulary. Encoded as "source=target" per option.
+  if (shortItems.length >= 3) {
+    challenges.push({
+      type: "MATCH",
+      order: order++,
+      question: "",
+      options: shortItems.slice(0, 5).map((it) => ({
+        text: `${it.source}=${it.target}`,
+        correct: true,
+      })),
+    });
+  }
+
+  // TYPE: free-text recall for short vocabulary (every other word).
+  shortItems.forEach((item, index) => {
+    if (index % 2 !== 0) return;
+    challenges.push({
+      type: "TYPE",
+      order: order++,
+      question: typePrompt(item.source),
+      options: [{ text: item.target, correct: true, audio: item.audio }],
+    });
+  });
+
+  // BUILD: reconstruct multi-word sentences (drills word order). Correct words
+  // are encoded "position|word"; decoys "0|word".
+  sentenceItems.forEach((item) => {
+    const answerWords = item.target.trim().split(/\s+/);
+    const answerSet = new Set(answerWords);
+    const decoys: string[] = [];
+
+    for (const other of items) {
+      if (other === item) continue;
+      for (const word of other.target.trim().split(/\s+/)) {
+        if (!answerSet.has(word) && !decoys.includes(word)) decoys.push(word);
+        if (decoys.length >= 3) break;
+      }
+      if (decoys.length >= 3) break;
+    }
+
+    challenges.push({
+      type: "BUILD",
+      order: order++,
+      question: item.source,
+      options: [
+        ...answerWords.map((word, i) => ({
+          text: `${i + 1}|${word}`,
+          correct: true,
+        })),
+        ...decoys.map((word) => ({ text: `0|${word}`, correct: false })),
       ],
     });
   });
@@ -730,7 +798,8 @@ const main = async () => {
           const lesson = lessons[l];
           const specs = buildLessonChallenges(
             unitSeed.lessons[l],
-            courseSeed.selectPrompt
+            courseSeed.selectPrompt,
+            courseSeed.typePrompt
           );
 
           const challenges = await db
