@@ -42,11 +42,16 @@ export const LanguageOnboarding = ({ initialLocale }: LanguageOnboardingProps) =
   }, []);
 
   const onContinue = () => {
-    // Persist on the server before navigating to the cookie-guarded /courses,
-    // so the choice is durable even if the client cookie is somehow dropped.
+    // Persist on the server before navigating to the cookie-guarded /courses.
+    // The client cookie is written synchronously inside persistLocale, so the
+    // guard passes regardless; navigate even if the server write rejects so the
+    // user can never get stranded on this screen.
     startTransition(async () => {
-      await persistLocale(selected);
-      router.push("/courses");
+      try {
+        await persistLocale(selected);
+      } finally {
+        router.push("/courses");
+      }
     });
   };
 
