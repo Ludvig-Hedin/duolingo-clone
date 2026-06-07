@@ -361,6 +361,222 @@ const SPANISH: SeedCourse = {
   ],
 };
 
+/**
+ * Polish → Swedish is a dedicated, learning-focused course for Polish speakers
+ * studying Swedish. Unlike a plain word list it teaches the things that actually
+ * matter in Swedish: nouns carry their en/ett gender article, verbs are taught
+ * as usable present-tense "jag ..." forms, and whole survival sentences appear
+ * in context. Units are ordered survival-first.
+ */
+const pair = (source: string, target: string): Item => ({ source, target });
+
+const POLISH_TO_SWEDISH: SeedCourse = {
+  title: "Polish → Swedish",
+  imageSrc: "/se.svg",
+  selectPrompt: (source) => `Jak powiesz "${source}" po szwedzku?`,
+  units: [
+    {
+      title: "Unit 1",
+      description: "Podstawowe zwroty",
+      lessons: [
+        {
+          title: "Powitania",
+          items: [
+            pair("cześć", "hej"),
+            pair("dzień dobry", "god dag"),
+            pair("dobry wieczór", "god kväll"),
+            pair("dobranoc", "god natt"),
+            pair("do widzenia", "hej då"),
+            pair("na razie", "vi ses"),
+          ],
+        },
+        {
+          title: "Grzeczność",
+          items: [
+            pair("tak", "ja"),
+            pair("nie", "nej"),
+            pair("dziękuję", "tack"),
+            pair("proszę", "varsågod"),
+            pair("przepraszam", "förlåt"),
+            pair("nie ma za co", "ingen orsak"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 2",
+      description: "Poznajmy się",
+      lessons: [
+        {
+          title: "Przedstawianie się",
+          items: [
+            pair("Jak się nazywasz?", "Vad heter du?"),
+            pair("Nazywam się Anna", "Jag heter Anna"),
+            pair("Miło mi", "Trevligt att träffas"),
+            pair("Jak się masz?", "Hur mår du?"),
+            pair("Dobrze, dziękuję", "Bra, tack"),
+            pair("Skąd jesteś?", "Varifrån kommer du?"),
+          ],
+        },
+        {
+          title: "Komunikacja",
+          items: [
+            pair("Czy mówisz po angielsku?", "Talar du engelska?"),
+            pair("Nie rozumiem", "Jag förstår inte"),
+            pair("Nie wiem", "Jag vet inte"),
+            pair(
+              "Mówię tylko trochę po szwedzku",
+              "Jag talar bara lite svenska"
+            ),
+            pair("Czy możesz mówić wolniej?", "Kan du tala långsammare?"),
+            pair("Co to znaczy?", "Vad betyder det?"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 3",
+      description: "Liczby",
+      lessons: [
+        {
+          title: "Liczby 0–5",
+          items: [
+            pair("zero", "noll"),
+            pair("jeden", "ett"),
+            pair("dwa", "två"),
+            pair("trzy", "tre"),
+            pair("cztery", "fyra"),
+            pair("pięć", "fem"),
+          ],
+        },
+        {
+          title: "Liczby 6–20",
+          items: [
+            pair("sześć", "sex"),
+            pair("siedem", "sju"),
+            pair("osiem", "åtta"),
+            pair("dziewięć", "nio"),
+            pair("dziesięć", "tio"),
+            pair("dwadzieścia", "tjugo"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 4",
+      description: "Ludzie i rodzina",
+      lessons: [
+        {
+          title: "Ludzie",
+          items: [
+            pair("mężczyzna", "en man"),
+            pair("kobieta", "en kvinna"),
+            pair("chłopiec", "en pojke"),
+            pair("dziewczyna", "en flicka"),
+            pair("dziecko", "ett barn"),
+            pair("przyjaciel", "en vän"),
+          ],
+        },
+        {
+          title: "Rodzina",
+          items: [
+            pair("mama", "en mamma"),
+            pair("tata", "en pappa"),
+            pair("siostra", "en syster"),
+            pair("brat", "en bror"),
+            pair("rodzina", "en familj"),
+            pair("babcia", "en mormor"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 5",
+      description: "Jedzenie i picie",
+      lessons: [
+        {
+          title: "Jedzenie",
+          items: [
+            pair("chleb", "bröd"),
+            pair("ser", "ost"),
+            pair("jabłko", "ett äpple"),
+            pair("ryba", "en fisk"),
+            pair("mięso", "kött"),
+            pair("jajko", "ett ägg"),
+          ],
+        },
+        {
+          title: "Picie",
+          items: [
+            pair("woda", "vatten"),
+            pair("kawa", "kaffe"),
+            pair("herbata", "te"),
+            pair("mleko", "mjölk"),
+            pair("piwo", "öl"),
+            pair("wino", "vin"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 6",
+      description: "Czasowniki",
+      lessons: [
+        {
+          title: "Podstawowe czasowniki",
+          items: [
+            pair("ja jestem", "jag är"),
+            pair("ja mam", "jag har"),
+            pair("ja chcę", "jag vill"),
+            pair("ja mogę", "jag kan"),
+            pair("ja wiem", "jag vet"),
+            pair("ja rozumiem", "jag förstår"),
+          ],
+        },
+        {
+          title: "Czynności",
+          items: [
+            pair("ja jem", "jag äter"),
+            pair("ja piję", "jag dricker"),
+            pair("ja mówię", "jag pratar"),
+            pair("ja idę", "jag går"),
+            pair("ja mieszkam", "jag bor"),
+            pair("ja pracuję", "jag jobbar"),
+          ],
+        },
+      ],
+    },
+    {
+      title: "Unit 7",
+      description: "Przydatne zdania",
+      lessons: [
+        {
+          title: "W mieście",
+          items: [
+            pair("Gdzie jest toaleta?", "Var är toaletten?"),
+            pair("Ile to kosztuje?", "Hur mycket kostar det?"),
+            pair("Gdzie jest dworzec?", "Var ligger stationen?"),
+            pair("Szukam hotelu", "Jag letar efter ett hotell"),
+            pair("Poproszę rachunek", "Kan jag få notan, tack"),
+            pair("Pomocy!", "Hjälp!"),
+          ],
+        },
+        {
+          title: "Towarzysko",
+          items: [
+            pair("Na zdrowie!", "Skål!"),
+            pair("Smacznego", "Smaklig måltid"),
+            pair("Powodzenia", "Lycka till"),
+            pair("Do zobaczenia jutro", "Vi ses imorgon"),
+            pair("Kocham cię", "Jag älskar dig"),
+            pair("Wszystkiego najlepszego", "Grattis"),
+          ],
+        },
+      ],
+    },
+  ],
+};
+
 const COURSES: SeedCourse[] = [
   SPANISH,
   // Learner knows Swedish, learns Polish: prompts Swedish, answers Polish.
@@ -371,14 +587,8 @@ const COURSES: SeedCourse[] = [
     (word) => word.sv,
     (word) => word.pl
   ),
-  // Learner knows Polish, learns Swedish: prompts Polish, answers Swedish.
-  buildDirectionalCourse(
-    "Polish → Swedish",
-    "/se.svg",
-    (source) => `Który z nich to "${source}"?`,
-    (word) => word.pl,
-    (word) => word.sv
-  ),
+  // Learner knows Polish, learns Swedish — dedicated, gender + verbs + sentences.
+  POLISH_TO_SWEDISH,
 ];
 
 /* -------------------------------------------------------------------------- */
