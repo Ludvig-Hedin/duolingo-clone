@@ -75,6 +75,7 @@ export const pl: Dictionary = {
     somethingWrongRetry: "Coś poszło nie tak. Spróbuj ponownie.",
     totalXp: "Łączne XP",
     heartsLeft: "Pozostałe serca",
+    grammarTip: "Wskazówka",
   },
   modals: {
     exit: {

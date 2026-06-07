@@ -74,6 +74,7 @@ export const en = {
     somethingWrongRetry: "Something went wrong. Please try again.",
     totalXp: "Total XP",
     heartsLeft: "Hearts left",
+    grammarTip: "Grammar Tip",
   },
   modals: {
     exit: {

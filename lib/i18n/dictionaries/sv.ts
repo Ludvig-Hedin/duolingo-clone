@@ -75,6 +75,7 @@ export const sv: Dictionary = {
     somethingWrongRetry: "Något gick fel. Försök igen.",
     totalXp: "Total XP",
     heartsLeft: "Hjärtan kvar",
+    grammarTip: "Grammatiktips",
   },
   modals: {
     exit: {
