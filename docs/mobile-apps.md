@@ -40,10 +40,23 @@ things make that work inside the native shell:
    third-party cookies by default — without this, sign-in silently fails on Android.
    iOS (WKWebView) persists cookies by default, so no equivalent change is needed.
 
-**Verified on iOS Simulator (iPhone 17, iOS 26.4):** the app loads the live
-marketing page, Clerk initialises in-WebView (the header resolves to the
-signed-out `LOGIN` state), and the `/sign-in` route renders Clerk's full
-email/password form ("Sign in to Duolingo Clone" → email → password → Continue).
+**What was verified when these apps were generated:**
+
+- The production site responds (`GET https://duolingo-clone-dev.vercel.app/` →
+  `200`), so there's a live target for the WebView to load.
+- Clerk's published config for this instance confirms **email + password only,
+  zero social/OAuth providers** — so no embedded-WebView OAuth failure mode
+  exists (queried directly from the Clerk frontend API).
+- Both native projects were generated, `cap sync` applied the config cleanly,
+  and the generated `capacitor.config.json` in each platform contains the
+  expected `server.url` + `allowNavigation` list.
+
+**Not yet run on a device/simulator.** The generating environment had no
+bootable iOS Simulator runtime and no Android JDK, so an actual on-device
+launch was **not** performed here. The remaining manual step is to run the
+build-and-install steps below once and confirm sign-in on a real device or
+simulator. This is a stock Capacitor project, so it builds with the standard
+Xcode / Android Studio flow.
 
 > **Production note:** the live deploy currently uses a Clerk **development**
 > instance ("Development mode" badge on the sign-in card). That works for
