@@ -123,6 +123,10 @@ export const challengeProgress = pgTable("challenge_progress", {
     })
     .notNull(),
   completed: boolean("completed").notNull().default(false),
+  // Spaced repetition: how many times answered correctly in a row, and when the
+  // challenge next becomes due for review (null = not scheduled, e.g. tips).
+  strength: integer("strength").notNull().default(0),
+  nextReviewAt: timestamp("next_review_at"),
 });
 
 export const challengeProgressRelations = relations(

@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "./drizzle";
 import {
@@ -243,4 +243,54 @@ export const getTopTenUsers = cache(async () => {
   });
 
   return data;
+});
+
+// Spaced-repetition review set: previously-completed challenges in the active
+// course that are due again (nextReviewAt has passed, or was never scheduled),
+// soonest-due first, capped at 10. Shaped like a lesson so <Quiz> can render it.
+export const getPracticeChallenges = cache(async () => {
+  const { userId } = await auth();
+  const currentUserProgress = await getUserProgress();
+
+  if (!userId || !currentUserProgress?.activeCourseId) return null;
+
+  const progress = await db.query.challengeProgress.findMany({
+    where: and(
+      eq(challengeProgress.userId, userId),
+      eq(challengeProgress.completed, true)
+    ),
+    with: {
+      challenge: {
+        with: {
+          challengeOptions: true,
+          lesson: { with: { unit: true } },
+        },
+      },
+    },
+  });
+
+  const now = Date.now();
+
+  const due = progress
+    .filter((entry) => entry.challenge && entry.challenge.type !== "TIP")
+    .filter(
+      (entry) =>
+        entry.challenge.lesson?.unit?.courseId ===
+        currentUserProgress.activeCourseId
+    )
+    .filter(
+      (entry) => !entry.nextReviewAt || entry.nextReviewAt.getTime() <= now
+    )
+    .sort(
+      (a, b) =>
+        (a.nextReviewAt?.getTime() ?? 0) - (b.nextReviewAt?.getTime() ?? 0)
+    )
+    .slice(0, 10)
+    .map((entry) => ({
+      ...entry.challenge,
+      completed: false,
+      challengeOptions: entry.challenge.challengeOptions,
+    }));
+
+  return due.length ? due : null;
 });

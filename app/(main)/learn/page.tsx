@@ -14,6 +14,7 @@ import {
 } from "@/db/queries";
 
 import { Header } from "./header";
+import { PracticeButton } from "./practice-button";
 import { Unit } from "./unit";
 
 const LearnPage = async () => {
@@ -52,6 +53,7 @@ const LearnPage = async () => {
           hasActiveSubscription={isPro}
         />
 
+        <PracticeButton />
         {!isPro && <Promo />}
         <Quests points={userProgress.points} />
       </StickyWrapper>

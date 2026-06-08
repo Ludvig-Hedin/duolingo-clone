@@ -9,6 +9,16 @@ import db from "@/db/drizzle";
 import { getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 
+// Spaced repetition: hours until a correctly-answered challenge is due again,
+// indexed by its (capped) strength. Each correct answer grows the interval.
+const REVIEW_INTERVALS_HOURS = [4, 24, 72, 168, 336, 720];
+
+const nextReviewDate = (strength: number) => {
+  const index = Math.min(strength, REVIEW_INTERVALS_HOURS.length) - 1;
+  const hours = REVIEW_INTERVALS_HOURS[Math.max(index, 0)];
+  return new Date(Date.now() + hours * 60 * 60 * 1000);
+};
+
 export const upsertChallengeProgress = async (challengeId: number) => {
   const { userId } = await auth();
 
@@ -48,10 +58,19 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     return { error: "hearts" };
 
   if (isPractice) {
+    const strength = isTip
+      ? existingChallengeProgress.strength
+      : Math.min(
+          existingChallengeProgress.strength + 1,
+          REVIEW_INTERVALS_HOURS.length
+        );
+
     await db
       .update(challengeProgress)
       .set({
         completed: true,
+        strength,
+        nextReviewAt: isTip ? null : nextReviewDate(strength),
       })
       .where(eq(challengeProgress.id, existingChallengeProgress.id));
 
@@ -65,6 +84,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
     revalidatePath("/learn");
     revalidatePath("/lesson");
+    revalidatePath("/practice");
     revalidatePath("/quests");
     revalidatePath("/leaderboard");
     revalidatePath(`/lesson/${lessonId}`);
@@ -75,6 +95,8 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     challengeId,
     userId,
     completed: true,
+    strength: isTip ? 0 : 1,
+    nextReviewAt: isTip ? null : nextReviewDate(1),
   });
 
   await db
@@ -86,6 +108,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
 
   revalidatePath("/learn");
   revalidatePath("/lesson");
+  revalidatePath("/practice");
   revalidatePath("/quests");
   revalidatePath("/leaderboard");
   revalidatePath(`/lesson/${lessonId}`);
