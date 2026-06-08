@@ -43,6 +43,9 @@ export const BuildChallenge = ({
       return { id: o.id, word, order: Number(order) };
     })
   );
+  // TODO(bug-hunt): shuffle() uses Math.random() in a useState initializer — same
+  // hydration-mismatch edge as MatchChallenge if this challenge is server-rendered
+  // first (mid-lesson reload). Fix: shuffle in a useEffect after mount.
   const [bankOrder] = useState(() => shuffle(tokens.map((token) => token.id)));
   const [picked, setPicked] = useState<number[]>([]);
   const [status, setStatus] = useState<"none" | "wrong">("none");

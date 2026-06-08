@@ -36,6 +36,11 @@ export const MatchChallenge = ({
       return { left, right };
     })
   );
+  // TODO(bug-hunt): shuffle() uses Math.random() in a useState initializer. If
+  // this challenge is the first one server-rendered (mid-lesson reload), the
+  // server/client tile order differs → React hydration warning + brief flash.
+  // Advancing client-side (the common path) is unaffected. Fix: shuffle in a
+  // useEffect after mount, or gate behind a mounted flag.
   const [leftOrder] = useState(() => shuffle(pairs.map((_, i) => i)));
   const [rightOrder] = useState(() => shuffle(pairs.map((_, i) => i)));
 

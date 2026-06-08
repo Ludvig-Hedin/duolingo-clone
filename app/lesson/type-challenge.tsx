@@ -66,9 +66,6 @@ export const TypeChallenge = ({
                 setValue(e.target.value);
                 setStatus("none");
               }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") check();
-              }}
               placeholder={t.lesson.typePlaceholder}
               disabled={disabled}
               className={cn(
@@ -76,6 +73,10 @@ export const TypeChallenge = ({
                 status === "wrong" && "border-rose-300 bg-rose-50 text-rose-600"
               )}
             />
+
+            {status === "wrong" && (
+              <p className="text-base font-bold text-green-600">{answer}</p>
+            )}
           </div>
         </div>
       </div>

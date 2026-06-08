@@ -269,8 +269,6 @@ export const getPracticeChallenges = cache(async () => {
     },
   });
 
-  const now = Date.now();
-
   const due = progress
     .filter((entry) => entry.challenge && entry.challenge.type !== "TIP")
     .filter(
@@ -278,9 +276,7 @@ export const getPracticeChallenges = cache(async () => {
         entry.challenge.lesson?.unit?.courseId ===
         currentUserProgress.activeCourseId
     )
-    .filter(
-      (entry) => !entry.nextReviewAt || entry.nextReviewAt.getTime() <= now
-    )
+    // Weakest / soonest-due first (never-scheduled sorts to the front).
     .sort(
       (a, b) =>
         (a.nextReviewAt?.getTime() ?? 0) - (b.nextReviewAt?.getTime() ?? 0)

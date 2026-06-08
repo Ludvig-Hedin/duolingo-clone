@@ -305,6 +305,8 @@ export const Quiz = ({
   if (challenge.type === "MATCH") {
     return (
       <>
+        {correctAudio}
+        {incorrectAudio}
         {header}
         <MatchChallenge
           key={challenge.id}
@@ -319,6 +321,8 @@ export const Quiz = ({
   if (challenge.type === "TYPE") {
     return (
       <>
+        {correctAudio}
+        {incorrectAudio}
         {header}
         <TypeChallenge
           key={challenge.id}
@@ -335,6 +339,8 @@ export const Quiz = ({
   if (challenge.type === "BUILD") {
     return (
       <>
+        {correctAudio}
+        {incorrectAudio}
         {header}
         <BuildChallenge
           key={challenge.id}

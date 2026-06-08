@@ -8,6 +8,7 @@ import { UserProgress } from "@/components/user-progress";
 import {
   getCourseProgress,
   getLessonPercentage,
+  getPracticeChallenges,
   getUnits,
   getUserProgress,
   getUserSubscription,
@@ -23,6 +24,7 @@ const LearnPage = async () => {
   const lessonPercentageData = getLessonPercentage();
   const unitsData = getUnits();
   const userSubscriptionData = getUserSubscription();
+  const practiceData = getPracticeChallenges();
 
   const [
     userProgress,
@@ -30,12 +32,14 @@ const LearnPage = async () => {
     courseProgress,
     lessonPercentage,
     userSubscription,
+    practiceChallenges,
   ] = await Promise.all([
     userProgressData,
     unitsData,
     courseProgressData,
     lessonPercentageData,
     userSubscriptionData,
+    practiceData,
   ]);
 
   if (!courseProgress || !userProgress || !userProgress.activeCourse)
@@ -53,7 +57,7 @@ const LearnPage = async () => {
           hasActiveSubscription={isPro}
         />
 
-        <PracticeButton />
+        <PracticeButton due={practiceChallenges?.length ?? 0} />
         {!isPro && <Promo />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
