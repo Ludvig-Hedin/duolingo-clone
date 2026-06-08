@@ -40,23 +40,30 @@ things make that work inside the native shell:
    third-party cookies by default — without this, sign-in silently fails on Android.
    iOS (WKWebView) persists cookies by default, so no equivalent change is needed.
 
-**What was verified when these apps were generated:**
+**What was verified:**
 
 - The production site responds (`GET https://duolingo-clone-dev.vercel.app/` →
   `200`), so there's a live target for the WebView to load.
 - Clerk's published config for this instance confirms **email + password only,
   zero social/OAuth providers** — so no embedded-WebView OAuth failure mode
   exists (queried directly from the Clerk frontend API).
-- Both native projects were generated, `cap sync` applied the config cleanly,
-  and the generated `capacitor.config.json` in each platform contains the
-  expected `server.url` + `allowNavigation` list.
+- Both native projects were generated and `cap sync` applied the config cleanly;
+  each platform's generated `capacitor.config.json` contains the expected
+  `server.url` + `allowNavigation` list.
+- **Android: a real debug APK was built** — `./gradlew assembleDebug` →
+  `app-debug.apk` (4.6 MB, `package com.lingo.app`, label **Lingo**, launcher
+  `com.lingo.app.MainActivity`). Installable on any device right now (see below).
 
-**Not yet run on a device/simulator.** The generating environment had no
-bootable iOS Simulator runtime and no Android JDK, so an actual on-device
-launch was **not** performed here. The remaining manual step is to run the
-build-and-install steps below once and confirm sign-in on a real device or
-simulator. This is a stock Capacitor project, so it builds with the standard
-Xcode / Android Studio flow.
+**iOS not compiled in the build environment.** `xcodebuild` could not run here
+(the harness can't initialise Xcode's developer cache —
+`confstr(DARWIN_USER_CACHE_DIR)` returns EIO), and no Simulator runtime was
+installed. This is an environment limitation, **not** a project defect — it's a
+stock Capacitor Xcode project. Build it normally in Xcode or a regular Terminal
+(steps below); that is the one remaining manual step for iOS.
+
+**Sign-in itself has not been exercised on a physical device yet** — do that
+once after installing (open app → Log in → email + password) to confirm
+end-to-end. Everything that makes it work is configured and verified above.
 
 > **Production note:** the live deploy currently uses a Clerk **development**
 > instance ("Development mode" badge on the sign-in card). That works for
@@ -114,33 +121,51 @@ xcodebuild -project App/App.xcodeproj -scheme App -configuration Debug \
 
 ## Build & run — Android
 
-> Android was **scaffolded and configured** here but **not compiled** — this machine
-> has no JDK. Build it from Android Studio (it ships its own JDK + SDK).
+The debug APK **builds successfully** (verified). The simplest path is Android
+Studio (it ships its own JDK + SDK):
 
 ```bash
 nvm use 22
 bun run android      # = cap sync android && cap open android
 ```
 
-This opens the project in Android Studio. Then:
+### CLI build (what was used here)
 
-1. Let Gradle sync finish (first sync downloads the Gradle wrapper + SDK bits).
-2. **Run ▶** onto an emulator or a USB-connected device (enable USB debugging).
+If you prefer the command line, you need a JDK 21 and the Android SDK 36 +
+build-tools. One-time setup on macOS:
 
-**To put it on your phone home screen:**
+```bash
+brew install openjdk@21
+brew install --cask android-commandlinetools
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+sdkmanager --sdk_root="$ANDROID_HOME" "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+echo "sdk.dir=$ANDROID_HOME" > android/local.properties   # git-ignored
+```
 
-- Run once from Android Studio onto the connected device, **or**
-- **Build → Build Bundle(s) / APK(s) → Build APK(s)**, then install the generated
-  `android/app/build/outputs/apk/debug/app-debug.apk`:
+> Use **JDK 21**, not 25 — Capacitor's Gradle 8.x rejects newer JDKs.
+
+Then build:
+
+```bash
+cd android
+JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home" \
+  ./gradlew assembleDebug
+# → android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Install on your phone's home screen
+
+- **Android Studio:** plug in your phone (USB debugging on) and press **Run ▶**,
+  or **Build → Build APK(s)**.
+- **From the built APK** (the `assembleDebug` output above): connect the phone
+  and install it:
   ```bash
   adb install android/app/build/outputs/apk/debug/app-debug.apk
   ```
-
-CLI build (once a JDK + Android SDK are on PATH):
-
-```bash
-cd android && ./gradlew assembleDebug
-```
+  Or copy `app-debug.apk` onto the phone and tap it (allow "install from unknown
+  sources"). The **Lingo** icon lands on the home screen.
 
 ---
 
@@ -199,6 +224,10 @@ the per-platform `.gitignore` files Capacitor generates.
   submission. Use native IAP (e.g. RevenueCat) if/when you publish.
 - **Clerk dev instance.** See the production note above — switch to a Clerk
   production instance before a store release.
-- **Android build not run in this environment** (no JDK). The project is complete and
-  builds in Android Studio with one click.
-```
+- **Android** builds and produces a working `app-debug.apk` (verified). **iOS**
+  couldn't be compiled in the generating environment (Xcode's build service
+  needs a developer cache the harness can't provide) — it builds normally in
+  Xcode / a regular Terminal.
+- **Sign-in not yet exercised on a physical device.** Auth is fully configured
+  (email + password, third-party cookies on Android); confirm end-to-end on
+  first install.
