@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { upsertUserProgress } from "@/actions/user-progress";
 import { courses, userProgress } from "@/db/schema";
 import { useTranslation } from "@/lib/i18n/context";
+import { localizeCourseTitle } from "@/lib/i18n/course-titles";
 
 import { Card } from "./card";
 
@@ -18,7 +19,7 @@ type ListProps = {
 
 export const List = ({ courses, activeCourseId }: ListProps) => {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [pending, startTransition] = useTransition();
 
   const onClick = (id: number) => {
@@ -39,7 +40,7 @@ export const List = ({ courses, activeCourseId }: ListProps) => {
         <Card
           key={course.id}
           id={course.id}
-          title={course.title}
+          title={localizeCourseTitle(locale, course.title)}
           imageSrc={course.imageSrc}
           onClick={onClick}
           disabled={pending}

@@ -24,12 +24,9 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   pl: "Polski",
 };
 
-/**
- * Optional flag asset per locale. English has no flag asset in `/public`, so it
- * falls back to a globe icon in the UI.
- */
+/** Flag asset per locale (falls back to a globe icon if ever null). */
 export const LOCALE_FLAGS: Record<Locale, string | null> = {
-  en: null,
+  en: "/gb.svg",
   sv: "/se.svg",
   pl: "/pl.svg",
 };

@@ -618,6 +618,24 @@ const COURSES: SeedCourse[] = [
   ),
   // Learner knows Polish, learns Swedish — dedicated, gender + verbs + sentences.
   POLISH_TO_SWEDISH,
+  // Learner knows Swedish, learns English: prompts Swedish, answers English.
+  buildDirectionalCourse(
+    "Swedish → English",
+    "/gb.svg",
+    (source) => `Vilken av dessa är "${source}"?`,
+    (source) => `Skriv på engelska: "${source}"`,
+    (word) => word.sv,
+    (word) => word.en
+  ),
+  // Learner knows Polish, learns English: prompts Polish, answers English.
+  buildDirectionalCourse(
+    "Polish → English",
+    "/gb.svg",
+    (source) => `Jak powiesz "${source}" po angielsku?`,
+    (source) => `Napisz po angielsku: "${source}"`,
+    (word) => word.pl,
+    (word) => word.en
+  ),
 ];
 
 /* -------------------------------------------------------------------------- */

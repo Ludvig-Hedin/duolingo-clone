@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/context";
+import { dictionaries } from "@/lib/i18n/dictionaries";
 import {
   LOCALES,
   LOCALE_FLAGS,
@@ -27,7 +28,9 @@ type LanguageOnboardingProps = {
  * confirm or change it, persists the choice, then continues to course
  * selection.
  */
-export const LanguageOnboarding = ({ initialLocale }: LanguageOnboardingProps) => {
+export const LanguageOnboarding = ({
+  initialLocale,
+}: LanguageOnboardingProps) => {
   const router = useRouter();
   const { t, persistLocale } = useTranslation();
   const [selected, setSelected] = useState<Locale>(initialLocale);
@@ -64,7 +67,9 @@ export const LanguageOnboarding = ({ initialLocale }: LanguageOnboardingProps) =
           {t.onboarding.title}
         </h1>
 
-        <p className="text-muted-foreground">{t.onboarding.subtitle}</p>
+        <p className="text-balance text-muted-foreground">
+          {t.onboarding.subtitle}
+        </p>
       </div>
 
       <div className="grid w-full grid-cols-1 gap-3">
@@ -79,23 +84,25 @@ export const LanguageOnboarding = ({ initialLocale }: LanguageOnboardingProps) =
               onClick={() => setSelected(option)}
               aria-pressed={isActive}
               className={cn(
-                "flex items-center gap-x-4 rounded-xl border-2 border-b-[4px] p-4 text-left transition hover:bg-black/5 active:border-b-2",
+                "flex items-center gap-x-4 rounded-xl border-2 border-b-[4px] p-4 text-left transition hover:bg-black/5 active:translate-y-[2px]",
                 isActive
                   ? "border-green-300 bg-green-100 hover:bg-green-100"
                   : "border-slate-200"
               )}
             >
-              <div className="flex h-[32px] w-[40px] shrink-0 items-center justify-center overflow-hidden rounded-md border bg-white">
+              <div className="relative h-[34px] w-[46px] shrink-0 overflow-hidden rounded-md border">
                 {flag ? (
                   <Image
                     src={flag}
                     alt={LOCALE_LABELS[option]}
-                    height={32}
-                    width={40}
+                    fill
+                    sizes="46px"
                     className="object-cover"
                   />
                 ) : (
-                  <Globe className="h-5 w-5 text-green-600" />
+                  <span className="flex h-full w-full items-center justify-center bg-white">
+                    <Globe className="h-5 w-5 text-green-600" />
+                  </span>
                 )}
               </div>
 
@@ -120,7 +127,7 @@ export const LanguageOnboarding = ({ initialLocale }: LanguageOnboardingProps) =
         disabled={isPending}
         aria-disabled={isPending}
       >
-        {t.onboarding.continue}
+        {dictionaries[selected].onboarding.continue}
       </Button>
     </div>
   );
